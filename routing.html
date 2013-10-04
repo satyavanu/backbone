@@ -1,0 +1,127 @@
+/*!
+ * routing.html
+ * This file contains the code for the Filter controls.
+ *
+ * @project   Backbone Routing
+ * @date      2013-10-04
+ * @author    Satya vanu, Web developer <satyavanu@gmail.com>
+ * @licensor  Satya Vanu
+ * @site      http://www.github.com/satyavanu
+ *
+ */
+
+<!DOCTYPE  HTML>
+<html>
+   <title>Backbone Routing: dynamic content Loading </title>
+   <head>
+      <style>
+         header,#container{
+         width:680px;
+         margin:0 auto;
+         }
+         #container {
+         padding: 50px 0 100px;
+         }
+         ul {
+         margin:0;
+         padding:0;
+         width:500px;
+         }
+         nav ul li a {
+         text-decoration:none;
+         color:#fff;
+         }
+         nav ul li {
+         list-style:none;
+         display:inline-block;
+         width:100px;
+         background:#ddd;
+         padding:5px 10px 5px;
+         }
+      </style>
+   </head>
+   </body>
+   <header>
+      <nav>
+         <ul>
+            <li>
+               <a href="#/pages/home" class="links">
+               Home </a>
+            </li>
+            <li>
+               <a href="#/pages/blog"  class="links">
+               Blog </a>
+            </li>
+            <li>
+               <a href="#/pages/locations"  class="links">
+               Locations </a>
+            </li>
+            <li>
+               <a href="#/pages/contact"  class="links">
+               Contact </a>
+            </li>
+         </ul>
+      </nav>
+   </header>
+   <div id="container">
+      Home Page Content
+   </div>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+   <script>
+    (function($,undefined,window) {
+	
+	 /*  Backbone Model   */	
+	var PageModel = Backbone.Model.extend({
+	    defaults : {
+		route:"mypage"
+		},
+	    initialize:function() {
+		   
+		},
+		getPageContentView : function(data) {
+		   $("#container").html(data);
+		   // or use dynamic $.load("your_page_url");
+		}
+	});
+	
+	 /*  Backbone View   */	
+	 
+	var PageView = Backbone.View.extend({
+	    el : $("body"),
+		initialize:function() {
+		    _.bindAll(this, "loadData");
+		},
+		loadData : function() {
+		   pageModel.getPageContentView(pageModel.get("route"));
+		}
+	});
+	
+	/*  Backbone Routing Object  with defaults assigned   */	
+	
+	var PageRouter = Backbone.Router.extend({
+        routes: {
+		
+		"pages/:id": "getPage"
+        }
+    });
+	
+	var  pageRoute = new PageRouter;   // Create Routing Instance
+
+    /*  This function retains # change  */	
+	pageRoute.on('route:getPage', function (id) {
+        pageModel.set("route",id);
+		pageContentView.loadData();
+    });
+
+
+    var pageModel  = new PageModel();            // Create Your Page Model
+	var pageContentView  = new PageView();       // Create Your page View 
+	Backbone.history.start();                    // Initialize  Your backbone History 
+	
+		
+	}(jQuery))
+   </script>
+   </body>
+</html>
